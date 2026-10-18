@@ -96,14 +96,6 @@ function status(s){$('status').textContent=s}
 function showPreview(html){$('previewPanel').classList.remove('hidden');$('preview').srcdoc=html}
 function refreshPreview(){const lang=$('language').value,code=getCode();if(lang==='html')showPreview(code);else if(lang==='css')showPreview('<!doctype html><html><head><style>'+code.replace(/<\/style/gi,'<\\/style')+'</style></head><body><h1>CSS preview</h1><p>Edit the CSS to style this page.</p><button>Example button</button></body></html>')}
 function changeLang(loadExample=true){const lang=$('language').value;setMode();$('langInfo').textContent=info[lang]||'';$('runHint').textContent=lang==='python'?'Runs in browser':(['javascript','typescript','html','css','json'].includes(lang)?'Browser runtime':'Remote runtime');$('guide').textContent=(lang[0].toUpperCase()+lang.slice(1))+' selected. Press Example to load a starter program.';if(loadExample)setCode(examples[lang]||'');if(lang==='html'||lang==='css')refreshPreview();else $('previewPanel').classList.add('hidden');}
-async function runPython(code,stdin){
- status('Loading Python…');output('Loading Python runtime. The first run can take a moment…');
- if(!window.pyodide){if(!window.__pyodideLoading){window.__pyodideLoading=import('https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.mjs').then(m=>m.loadPyodide());}window.pyodide=await window.__pyodideLoading;}
- const py=window.pyodide;const lines=stdin.split(/\r?\n/);let ix=0;let stdout='',stderr='';
- py.setStdout({batched:s=>{stdout+=s+'\n';}});py.setStderr({batched:s=>{stderr+=s+'\n';}});
- py.globals.set('__liwi_input_lines',lines);py.globals.set('__liwi_input_index',0);
- const prelude='''; // placeholder
-}
 async function runPy(code,stdin){
  status('Loading Python…');output('Loading Python runtime. The first run can take a moment…');
  if(!window.__liwiPyodide){window.__liwiPyodidePromise ||= import('https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.mjs').then(m=>m.loadPyodide());window.__liwiPyodide=await window.__liwiPyodidePromise;}
